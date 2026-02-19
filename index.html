@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ذَاكِـر | أحمد إبراهيم آل صالح</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --accent: #0288d1;
+            --bg: #050505;
+            --card: #0d0d0d;
+            --border: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 120px;
+        }
+
+        /* الشريط العلوي */
+        .navbar {
+            background: rgba(5, 5, 5, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 100;
+            letter-spacing: 10px;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(2, 136, 209, 0.4);
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* البطل */
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 80px 20px 40px;
+            background: radial-gradient(circle at top, #111, var(--bg));
+            border-radius: 20px;
+        }
+
+        .hero h2 {
+            font-size: 55px;
+            font-weight: 100;
+            letter-spacing: 15px;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(2, 136, 209, 0.4);
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: #888;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* البحث */
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: #000;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(2, 136, 209, 0.15);
+        }
+
+        .search-box button {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .search-box button:hover {
+            transform: scale(1.05);
+        }
+
+        /* المحمل والنتائج */
+        .loader {
+            text-align: center;
+            color: var(--accent);
+            padding: 30px;
+            font-weight: bold;
+            display: none;
+            font-size: 18px;
+        }
+
+        .loader i {
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .track-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 20px 25px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+
+        .track-item:hover {
+            background: #111;
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .track-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        .track-info h3 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #eee;
+            margin-bottom: 5px;
+        }
+
+        .track-info p {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            color: #444;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-action:hover {
+            color: var(--accent);
+        }
+
+        .btn-play {
+            color: var(--accent);
+            font-size: 24px;
+        }
+
+        /* مشغل الصوت */
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: rgba(5, 5, 5, 0.98);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: none;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-info h4 {
+            font-size: 14px;
+            color: var(--accent);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+
+        .player-controls {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .play-toggle {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .play-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .player-actions {
+            flex: 1;
+            display: flex;
+            justify-content: flex-start;
+            gap: 20px;
+        }
+
+        .btn-download {
+            background: none;
+            border: none;
+            color: #444;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-download:hover {
+            color: var(--accent);
+        }
+
+        /* رسالة الانتظار */
+        .loading-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(5, 5, 5, 0.95);
+            border: 1px solid var(--border);
+            padding: 40px 60px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 2000;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-message i {
+            font-size: 40px;
+            color: var(--accent);
+            animation: spin 1s linear infinite;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .loading-message p {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        /* التذييل */
+        .footer {
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid #111;
+            margin-top: 50px;
+        }
+
+        .rights {
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        .dev-name {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .snap-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: #fffc00;
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .snap-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 252, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 35px;
+            }
+
+            .player-bar {
+                padding: 0 15px;
+                height: 90px;
+            }
+
+            .player-info h4 {
+                max-width: 150px;
+            }
+
+            .loading-message {
+                padding: 30px 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">ذَاكِـر</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="hero">
+            <h2>ذَاكِـر</h2>
+            <p>منصتك الروحانية للاستماع وتحميل أرقى التلاوات القرآنية بأعلى جودة</p>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="اكتب اسم القارئ أو السورة...">
+                <button onclick="runSearch()"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+        <div id="loader" class="loader"><i class="fas fa-spinner"></i>جاري البحث...</div>
+        <div id="resultsArea" class="results"></div>
+    </main>
+
+    <div id="playerBar" class="player-bar">
+        <div class="player-info">
+            <h4 id="nowPlaying">اختر تلاوة للاستماع</h4>
+        </div>
+        <div class="player-controls">
+            <button class="play-toggle" onclick="togglePlay()"><i class="fas fa-play" id="mainPlayIcon"></i></button>
+        </div>
+        <div class="player-actions">
+            <button onclick="downloadTrack()" class="btn-download"><i class="fas fa-download"></i></button>
+        </div>
+    </div>
+
+    <div id="loadingMessage" class="loading-message">
+        <i class="fas fa-spinner"></i>
+        <p>جاري تحميل المقطع...</p>
+    </div>
+
+    <audio id="audioEngine"></audio>
+
+    <footer class="footer">
+        <p class="dev-name">بإشراف وتطوير: <span>أحمد إبراهيم آل صالح (ويلفر)</span></p>
+        <p class="rights">جميع الحقوق محفوظة © 2026</p>
+        <a href="https://www.snapchat.com/add/Sorry-711" class="snap-link" target="_blank">
+            <i class="fab fa-snapchat-ghost"></i> SNAP: Sorry-711
+        </a>
+    </footer>
+
+    <script>
+        const audio = document.getElementById('audioEngine');
+        const resultsArea = document.getElementById('resultsArea');
+        const playerBar = document.getElementById('playerBar');
+        const searchInput = document.getElementById('searchInput');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        let currentTracks = [];
+        let currentTrackIndex = -1;
+        let currentTrackUrl = '';
+
+        // البحث
+        async function runSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            document.getElementById('loader').style.display = 'block';
+            resultsArea.innerHTML = '';
+
+            try {
+                const res = await fetch('https://vidssave.com/api/proxy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: '/media/hot_list',
+                        data: { hot_type: 'ytb', keyword: query + ' تلاوة' }
+                    })
+                });
+
+                const data = await res.json();
+                currentTracks = data.data?.items || [];
+
+                if (currentTracks.length === 0) {
+                    resultsArea.innerHTML = '<p style="text-align:center; opacity:0.5;">لم يتم العثور على نتائج</p>';
+                } else {
+                    renderResults();
+                }
+            } catch (err) {
+                resultsArea.innerHTML = '<p style="text-align:center; color:#ff4444;">فشل البحث</p>';
+            }
+
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        // عرض النتائج
+        function renderResults() {
+            resultsArea.innerHTML = currentTracks.map((track, i) => `
+                <div class="track-item">
+                    <div class="track-info">
+                        <h3>${track.title}</h3>
+                        <p>AUDIO MP3 • HIGH FIDELITY</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-action" onclick="downloadTrackDirect(${i})"><i class="fas fa-download"></i></button>
+                        <button class="btn-action btn-play" onclick="playTrack(${i})"><i class="fas fa-play-circle"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // تشغيل التلاوة
+        async function playTrack(index) {
+            const track = currentTracks[index];
+            currentTrackIndex = index;
+
+            loadingMessage.style.display = 'block';
+
+            try {
+                const res = await fetch('https://api.vidssave.com/api/contentsite_api/media/parse', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `auth=20250901majwlqo&domain=api-ak.vidssave.com&origin=source&link=${encodeURIComponent(track.url)}`
+                });
+
+                const data = await res.json();
+                let link = data.data.resources.find(r => r.type === 'audio' || r.format === 'mp3')?.download_url || data.data.resources[0].download_url;
+                if (link.startsWith('//')) link = 'https:' + link;
+
+                currentTrackUrl = link;
+                audio.src = link;
+                audio.play();
+                document.getElementById('nowPlaying').innerText = track.title;
+                playerBar.style.display = 'flex';
+
+                loadingMessage.style.display = 'none';
+            } catch (err) {
+                loadingMessage.style.display = 'none';
+                alert('المعذرة، الرابط مؤمن حالياً');
+            }
+        }
+
+        // تحميل التلاوة
+        async function downloadTrackDirect(index) {
+            const track = currentTracks[index];
+            loadingMessage.style.display = 'block';
+
+            try {
+                const res = await fetch('https://api.vidssave.com/api/contentsite_api/media/parse', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `auth=20250901majwlqo&domain=api-ak.vidssave.com&origin=source&link=${encodeURIComponent(track.url)}`
+                });
+
+                const data = await res.json();
+                let link = data.data.resources.find(r => r.type === 'audio' || r.format === 'mp3')?.download_url || data.data.resources[0].download_url;
+                if (link.startsWith('//')) link = 'https:' + link;
+
+                loadingMessage.style.display = 'none';
+                window.open(link, '_blank');
+            } catch (err) {
+                loadingMessage.style.display = 'none';
+                alert('فشل التحميل');
+            }
+        }
+
+        // تحميل من المشغل
+        async function downloadTrack() {
+            if (currentTrackIndex === -1) return;
+            downloadTrackDirect(currentTrackIndex);
+        }
+
+        // تشغيل/إيقاف
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        audio.onplay = () => {
+            document.getElementById('mainPlayIcon').className = 'fas fa-pause';
+        };
+
+        audio.onpause = () => {
+            document.getElementById('mainPlayIcon').className = 'fas fa-play';
+        };
+
+        // البحث عند Enter
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') runSearch();
+        });
+    </script>
+</body>
+
+</html>
